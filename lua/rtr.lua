@@ -16,7 +16,7 @@ local Rtr = {}
 Rtr.new = function()
   return setmetatable({
     default_options = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } },
-    group = vim.api.nvim_create_augroup("rtr", {}),
+    augroup_name = "rtr",
     cache = {},
   }, { __index = Rtr })
 end
@@ -26,7 +26,7 @@ end
 function Rtr:setup(opts)
   self.opts = vim.tbl_extend("force", self.default_options, opts or {})
   vim.api.nvim_create_autocmd("BufEnter", {
-    group = self.group,
+    group = vim.api.nvim_create_augroup(self.augroup_name, {}),
     ---@param ev rtr.EventInfo
     callback = function(ev)
       self:on_buf_enter(ev)

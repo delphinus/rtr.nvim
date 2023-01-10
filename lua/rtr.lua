@@ -1,5 +1,5 @@
 ---@class rtr.Opts
----@field root_names string[] default: { ".git" }
+---@field root_names string|string[]|fun(name: string): boolean default: { ".git" }
 ---@field enabled_buftypes string[] default: { "", "acwrite" }
 
 ---@class rtr.EventInfo

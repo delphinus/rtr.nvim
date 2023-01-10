@@ -1,5 +1,6 @@
 ---@class rtr.Opts
 ---@field root_names string[] default: { ".git" }
+---@field enabled_buftypes string[] default: { "", "acwrite" }
 
 ---@class rtr.EventInfo
 ---@field buf integer
@@ -7,14 +8,14 @@
 ---@class rtr.Rtr
 ---@field default_options rtr.Opts
 ---@field opts rtr.Opts
----@field group integer
+---@field augroup_name string
 ---@field cache table<string, string>
 local Rtr = {}
 
 ---@return rtr.Rtr
 Rtr.new = function()
   return setmetatable({
-    default_options = { root_names = { ".git" } },
+    default_options = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } },
     group = vim.api.nvim_create_augroup("rtr", {}),
     cache = {},
   }, { __index = Rtr })
@@ -56,15 +57,9 @@ end
 
 ---@param bufnr integer
 ---@return boolean
-function Rtr:is_file(bufnr) -- luacheck: ignore 212
+function Rtr:is_file(bufnr)
   local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-  -- See :h 'buftype'
-  for _, bt in ipairs { "", "acwrite" } do
-    if buftype == bt then
-      return true
-    end
-  end
-  return false
+  return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
 end
 
 local rooter = Rtr.new()

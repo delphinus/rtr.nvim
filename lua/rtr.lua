@@ -1,6 +1,7 @@
 ---@class rtr.Opts
 ---@field root_names string|string[]|fun(name: string): boolean default: { ".git" }
 ---@field enabled_buftypes string[] default: { "", "acwrite" }
+---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
 
 ---@class rtr.EventInfo
 ---@field buf integer
@@ -37,6 +38,9 @@ end
 ---@param ev rtr.EventInfo
 function Rtr:on_buf_enter(ev)
   if not self:is_file(ev.buf) then
+    return
+  end
+  if self.opts.buf_filter and not self.opts.buf_filter(ev.buf) then
     return
   end
   local file = vim.api.nvim_buf_get_name(ev.buf)

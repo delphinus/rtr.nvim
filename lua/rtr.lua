@@ -26,7 +26,22 @@ end
 ---@param opts rtr.Opts?
 ---@return nil
 function Rtr:setup(opts)
+  ---@param typ string
+  ---@return (fun(v: any): boolean), string
+  local function orFalseOrNil(typ)
+    return function(v)
+      return type(v) == typ or v == false or v == nil
+    end,
+      ("should be a %s or false or nil"):format(typ)
+  end
+
   self.opts = vim.tbl_extend("force", self.default_options, opts or {})
+  vim.validate {
+    root_names = { self.opts.root_names, { "string", "table", "function" } },
+    disabled_filetypes = { self.opts.disabled_filetypes, orFalseOrNil "table" },
+    enabled_buftypes = { self.opts.enabled_buftypes, orFalseOrNil "table" },
+    buf_filter = { self.opts.buf_filter, orFalseOrNil "function" },
+  }
   vim.api.nvim_create_autocmd("BufEnter", {
     group = vim.api.nvim_create_augroup(self.augroup_name, {}),
     ---@param ev rtr.EventInfo

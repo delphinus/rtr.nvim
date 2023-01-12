@@ -88,11 +88,12 @@ function Rtr:is_file(bufnr)
   return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
 end
 
-local rooter = Rtr.new()
+local rtr = Rtr.new()
 
 return {
   ---@param opts rtr.Opts?
   setup = function(opts)
-    rooter:setup(opts)
+    rtr:setup(opts)
   end,
+  rtr = rtr,
 }

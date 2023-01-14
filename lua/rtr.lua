@@ -5,12 +5,15 @@
 ---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
 ---@field log_level integer|false|nil default: nil
 
+---@class rtr.InstanceOpts: rtr.Opts
+---@field enabled_buftypes string[]|false
+
 ---@class rtr.EventInfo
 ---@field buf integer
 
 ---@class rtr.Rtr
 ---@field default_options rtr.Opts
----@field opts rtr.Opts
+---@field opts rtr.InstanceOpts
 ---@field augroup_name string
 ---@field cache table<string, string>
 local Rtr = {}

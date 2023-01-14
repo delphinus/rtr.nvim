@@ -82,6 +82,8 @@ setup(opts: rtr.Opts?)					       *rtr-usage-setup*
 		  buf_filter = function(name)
 		    return vim.endswith(name, "foo_bar")
 		  end,
+		  -- Show log when changed current-directory.
+		  log_level = vim.log.levels.DEBUG,
 		}
 
 
@@ -123,6 +125,12 @@ buf_filter	(fun(bufnr: integer): boolean)|false|nil
 
 		Default: `nil`
 
+log_level	(integer|false|nil)			 *rtr-options-log_level*
+		Set log level to inform it has changed |current-directory|. In
+		default, this is set not to show any info (value: `nil`). You
+		should use |vim.log.levels| for the value.
+
+		Default: `nil`
 
 ==============================================================================
 CAVEATS								   *rtr-caveats*

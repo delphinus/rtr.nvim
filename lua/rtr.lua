@@ -3,6 +3,7 @@
 ---@field disabled_filetypes string[]|false|nil default: nil
 ---@field enabled_buftypes string[]|false|nil default: { "", "acwrite" }
 ---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
+---@field log_level integer|false|nil default: nil
 
 ---@class rtr.EventInfo
 ---@field buf integer
@@ -41,6 +42,7 @@ function Rtr:setup(opts)
     disabled_filetypes = { self.opts.disabled_filetypes, orFalseOrNil "table" },
     enabled_buftypes = { self.opts.enabled_buftypes, orFalseOrNil "table" },
     buf_filter = { self.opts.buf_filter, orFalseOrNil "function" },
+    log_level = { self.opts.log_level, orFalseOrNil "integer" },
   }
   vim.api.nvim_create_autocmd("BufEnter", {
     group = vim.api.nvim_create_augroup(self.augroup_name, {}),
@@ -78,7 +80,7 @@ function Rtr:on_buf_enter(ev)
     self.cache[dir] = vim.fs.dirname(root_file)
   end
   vim.api.nvim_set_current_dir(self.cache[dir])
-  vim.notify("[rooter] Set CWD to " .. self.cache[dir], vim.log.levels.DEBUG)
+  self:notify("Set CWD to " .. self.cache[dir])
 end
 
 ---@param bufnr integer
@@ -89,6 +91,15 @@ function Rtr:is_file(bufnr)
   end
   local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
   return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
+end
+
+---@param msg string
+---@param level integer?
+function Rtr:notify(msg, level)
+  local log_level = level or self.opts.log_level
+  if log_level then
+    vim.notify("[rtr] " .. msg, log_level)
+  end
 end
 
 local rtr = Rtr.new()

@@ -33,3 +33,7 @@ require("lazy").setup {
 Just done. Simple!
 
 See more detail usage in [doc](doc/rtr.txt).
+
+## Caveats
+
+This plugin needs `vim.fs.find` to work. You chould use newer Neovim (>= 0.8.2).

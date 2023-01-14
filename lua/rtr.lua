@@ -36,6 +36,16 @@ function Rtr:setup(opts)
       ("should be a %s or false or nil"):format(typ)
   end
 
+  ---@return boolean
+  local function can_work()
+    return not not (vim.fs and vim.fs.find)
+  end
+
+  if not can_work() then
+    self:notify("This plugin needs vim.fs.find", vim.log.levels.ERROR)
+    return
+  end
+
   self.opts = vim.tbl_extend("force", self.default_options, opts or {})
   vim.validate {
     root_names = { self.opts.root_names, { "string", "table", "function" } },

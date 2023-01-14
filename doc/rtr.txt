@@ -136,7 +136,7 @@ log_level	(integer|false|nil)			 *rtr-options-log_level*
 CAVEATS								   *rtr-caveats*
 
 This plugin needs |vim.fs.find| to be implemented by your Neovim. So it works
-on Neovim >= 0.9.
+on Neovim >= 0.8.2.
 
 
 ==============================================================================

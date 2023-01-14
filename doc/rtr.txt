@@ -1,0 +1,148 @@
+rtr.txt	  Simple & small implementation for chdir'ing accordingly
+
+Author: delphinus <me@delphinus.dev>
+License: MIT License
+
+CONTENTS							  *rtr-contents*
+
+Introduction		|rtr-introduction|
+
+==============================================================================
+INTRODUCTION						      *rtr-introduction*
+
+This plugin changes |current-directory| according to the file on each buffer.
+
+
+==============================================================================
+INSTALL								   *rtr-install*
+
+Clone this repo into the dir for |packages|.
+>
+	git clone https://github.com/delphinus/rtr.nvim \
+	  ~/.local/share/nvim/site/pack/foo/start/rtr.nvim
+
+And call `setup()` in your |init.lua|.
+>
+	require("rtr").setup {}
+
+Or you can use any your favorite plugin manager.
+>
+	-- for packer.nvim
+	use {
+	  "delphinus/rtr.nvim",
+	  config = function()
+	    require("rtr").setup {}
+	  end,
+	}
+
+	-- for lazy.nvim
+	require("lazy").setup {
+	  { "delphinus/rtr.nvim", config = true },
+	}
+
+
+==============================================================================
+FEATURES							  *rtr-features*
+
+After calling `setup()`, it changes |current-directory| automatically every time
+when you enter another buffer (run on |BufEnter|). In default, it occurs on
+file-related buffers, namely their |'buftype'| are `""` or `"acwrite"`.
+
+You can set detailed condition to detect which buffers it should change
+|current-directory| by several options. See |rtr-options|.
+
+Some options have types like `foo|false|nil`. It means this below.
+
+	1. `foo`	Enable this option and set the value: `foo`.
+	2. `false`	Disable this option completely.
+	3. `nil`	Use the default value for this option.
+
+For example, `{ enabled_buftypes = { "" } }` means it works only when the buffer
+is a “normal buffer” (See |buftype|). `{ enabled_buftypes = false }` means it does
+not work completely. `{ enabled_buftypes = nil }` (or a empty table: `{}`) means
+it uses the default value: `{ "", "acwrite"}`.
+
+==============================================================================
+USAGE								     *rtr-usage*
+
+setup(opts: rtr.Opts?)					       *rtr-usage-setup*
+		Set options and setup |autocmd| to work this plugin. You can
+		call this function to set options and change plugin's feature.
+
+		Configuration example.
+>
+		require("rtr").setup {
+		  -- Set names for detecting root directories.
+		  root_names = { ".git", "Makefile" },
+		  -- It does not change for these filetypes.
+		  disabled_filetypes = { "ini", "conf" },
+		  -- It changes only when 'buftype' are these below.
+		  enabled_buftypes = { "", "acwrite" },
+		  -- A function to enable/disable its feature.
+		  buf_filter = function(name)
+		    return vim.endswith(name, "foo_bar")
+		  end,
+		}
+
+
+==============================================================================
+OPTIONS								   *rtr-options*
+
+							*rtr-options-root_names*
+root_names	(string|string[]|fun(name: string): boolean)
+		Names to detect a root directory to change |current-directory|.
+		This option will be used for the 1st parameter of
+		|vim.fs.find()|.
+>
+		-- deal with ".git" only for names
+		require("rtr").setup { root_names = ".git" }
+		-- You can use a string table.
+		require("rtr").setup { root_names = { ".git", "Makefile" } }
+		-- You can also use a function to detect it.
+		require("rtr").setup {
+		  root_names = function(name)
+		    return vim.endswith(name, ".git")
+		  end,
+		}
+<
+		Default: `{ ".git" }`
+
+disabled_filetypes	(string[]|false|nil)
+		Set |'filetype'| values not to work this plugin.
+
+		Default: `nil`
+
+enabled_buftypes	(string[]|false|nil)
+		Set |'buftype'| to work this plugin.
+
+		Default: `{ "", "acwrite" }`
+
+buf_filter	(fun(bufnr: integer): boolean)|false|nil
+		Set a function to detect whether the plugin can work on the
+		buffer or not.
+
+		Default: `nil`
+
+
+==============================================================================
+CAVEATS								   *rtr-caveats*
+
+This plugin needs |vim.fs.find| to be implemented by your Neovim. So it works
+on Neovim >= 0.9.
+
+
+==============================================================================
+REFERENCES							*rtr-references*
+
+This plugin borrows many ideas from these below.
+
+https://github.com/airblade/vim-rooter
+https://github.com/ahmedkhalf/project.nvim
+
+Redddit: You don't need 'vim-rooter' (usually) or How to set up smart
+autochange of current directory
+https://www.reddit.com/r/neovim/comments/zy5s0l/you_dont_need_vimrooter_usually_or_how_to_set_up/
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:

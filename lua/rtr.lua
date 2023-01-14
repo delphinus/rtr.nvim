@@ -1,7 +1,7 @@
 ---@class rtr.Opts
 ---@field root_names string|string[]|fun(name: string): boolean default: { ".git" }
 ---@field disabled_filetypes string[]|false|nil default: nil
----@field enabled_buftypes string[] default: { "", "acwrite" }
+---@field enabled_buftypes string[]|false|nil default: { "", "acwrite" }
 ---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
 
 ---@class rtr.EventInfo
@@ -84,6 +84,9 @@ end
 ---@param bufnr integer
 ---@return boolean
 function Rtr:is_file(bufnr)
+  if not self.opts.enabled_buftypes then
+    return false
+  end
   local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
   return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
 end

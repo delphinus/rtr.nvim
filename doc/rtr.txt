@@ -109,16 +109,17 @@ root_names	(string|string[]|fun(name: string): boolean)
 <
 		Default: `{ ".git" }`
 
-disabled_filetypes	(string[]|false|nil)
+disabled_filetypes	(string[]|false|nil)    *rtr-options-disabled_filetypes*
 		Set |'filetype'| values not to work this plugin.
 
 		Default: `nil`
 
-enabled_buftypes	(string[]|false|nil)
+enabled_buftypes	(string[]|false|nil)	  *rtr-options-enabled_buftypes*
 		Set |'buftype'| to work this plugin.
 
 		Default: `{ "", "acwrite" }`
 
+							*rtr-options-buf_filter*
 buf_filter	(fun(bufnr: integer): boolean)|false|nil
 		Set a function to detect whether the plugin can work on the
 		buffer or not.

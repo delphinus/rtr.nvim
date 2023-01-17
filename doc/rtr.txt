@@ -17,16 +17,16 @@ This plugin changes |current-directory| according to the file on each buffer.
 INSTALL								   *rtr-install*
 
 Clone this repo into the dir for |packages|.
->
+>bash
 	git clone https://github.com/delphinus/rtr.nvim \
 	  ~/.local/share/nvim/site/pack/foo/start/rtr.nvim
 
 And call `setup()` in your |init.lua|.
->
+>lua
 	require("rtr").setup {}
 
 Or you can use any your favorite plugin manager.
->
+>lua
 	-- for packer.nvim
 	use {
 	  "delphinus/rtr.nvim",
@@ -70,7 +70,7 @@ setup(opts: rtr.Opts?)					       *rtr-usage-setup*
 		call this function to set options and change plugin's feature.
 
 		Configuration example.
->
+>lua
 		require("rtr").setup {
 		  -- Set names for detecting root directories.
 		  root_names = { ".git", "Makefile" },
@@ -95,7 +95,7 @@ root_names	(string|string[]|fun(name: string): boolean)
 		Names to detect a root directory to change |current-directory|.
 		This option will be used for the 1st parameter of
 		|vim.fs.find()|.
->
+>lua
 		-- deal with ".git" only for names
 		require("rtr").setup { root_names = ".git" }
 		-- You can use a string table.

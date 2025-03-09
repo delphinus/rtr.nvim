@@ -15,7 +15,6 @@
 ---@field default_options rtr.Opts
 ---@field opts rtr.InstanceOpts
 ---@field augroup_name string
----@field cache table<string, string>
 local Rtr = {}
 
 ---@return rtr.Rtr
@@ -23,7 +22,6 @@ Rtr.new = function()
   return setmetatable({
     default_options = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } },
     augroup_name = "rtr",
-    cache = {},
   }, { __index = Rtr })
 end
 
@@ -85,15 +83,13 @@ function Rtr:on_buf_enter(ev)
     return
   end
   local dir = vim.fs.dirname(file)
-  if not self.cache[dir] then
-    local root_file = vim.fs.find(self.opts.root_names, { path = dir, upward = true })[1]
-    if not root_file then
-      return
-    end
-    self.cache[dir] = vim.fs.dirname(root_file)
+  local root_file = vim.fs.find(self.opts.root_names, { path = dir, upward = true })[1]
+  if not root_file then
+    return
   end
-  vim.api.nvim_set_current_dir(self.cache[dir])
-  self:notify("Set CWD to " .. self.cache[dir])
+  local result = vim.fs.dirname(root_file)
+  vim.api.nvim_set_current_dir(result)
+  self:notify("Set CWD to " .. result)
 end
 
 ---@param bufnr integer

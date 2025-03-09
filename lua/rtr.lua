@@ -70,9 +70,8 @@ function Rtr:on_buf_win_enter(ev)
     return
   end
   if self.opts.disabled_filetypes then
-    local ft = vim.api.nvim_buf_get_option(ev.buf, "filetype")
-    if vim.tbl_contains(self.opts.disabled_filetypes, ft) then
-      return true
+    if vim.tbl_contains(self.opts.disabled_filetypes, vim.bo[ev.buf].filetype) then
+      return
     end
   end
   if self.opts.buf_filter and not self.opts.buf_filter(ev.buf) then
@@ -98,8 +97,7 @@ function Rtr:is_file(bufnr)
   if not self.opts.enabled_buftypes then
     return false
   end
-  local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-  return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
+  return vim.tbl_contains(self.opts.enabled_buftypes, vim.bo[bufnr].buftype)
 end
 
 ---@param msg string

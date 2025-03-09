@@ -6,6 +6,10 @@ License: MIT License
 CONTENTS							  *rtr-contents*
 
 Introduction		|rtr-introduction|
+Feature			|rtr-feature|
+Options			|rtr-options|
+Caveats			|rtr-caveats|
+References		|rtr-references|
 
 ==============================================================================
 INTRODUCTION						      *rtr-introduction*
@@ -27,17 +31,9 @@ And call `setup()` in your |init.lua|.
 
 Or you can use any your favorite plugin manager.
 >lua
-	-- for packer.nvim
-	use {
-	  "delphinus/rtr.nvim",
-	  config = function()
-	    require("rtr").setup {}
-	  end,
-	}
-
 	-- for lazy.nvim
 	require("lazy").setup {
-	  { "delphinus/rtr.nvim", config = true },
+	  { "delphinus/rtr.nvim", opts = {} },
 	}
 
 
@@ -136,8 +132,8 @@ log_level	(integer|false|nil)			 *rtr-options-log_level*
 ==============================================================================
 CAVEATS								   *rtr-caveats*
 
-This plugin needs |vim.fs.find| to be implemented by your Neovim. So it works
-on Neovim >= 0.8.2.
+This plugin needs |vim.fs.root| to be implemented by your Neovim. So it works
+on Neovim >= 0.10.0.
 
 
 ==============================================================================

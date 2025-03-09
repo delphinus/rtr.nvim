@@ -80,6 +80,7 @@ function Rtr:on_buf_win_enter(ev)
   local root = vim.fs.root(ev.buf, self.opts.root_names)
   if not root then
     self:notify(("cannot find root for buffer:  %d"):format(ev.buf))
+    return
   end
   vim.cmd.lcd(root)
   self:notify("Set CWD to " .. root)

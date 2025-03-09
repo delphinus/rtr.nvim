@@ -53,7 +53,7 @@ function Rtr:setup(opts)
     disabled_filetypes = { self.opts.disabled_filetypes, orFalseOrNil "table" },
     enabled_buftypes = { self.opts.enabled_buftypes, orFalseOrNil "table" },
     buf_filter = { self.opts.buf_filter, orFalseOrNil "function" },
-    log_level = { self.opts.log_level, orFalseOrNil "integer" },
+    log_level = { self.opts.log_level, orFalseOrNil "number" },
   }
   vim.api.nvim_create_autocmd("BufEnter", {
     group = vim.api.nvim_create_augroup(self.augroup_name, {}),

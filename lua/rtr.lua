@@ -77,18 +77,12 @@ function Rtr:on_buf_win_enter(ev)
   if self.opts.buf_filter and not self.opts.buf_filter(ev.buf) then
     return
   end
-  local file = vim.api.nvim_buf_get_name(ev.buf)
-  if file == "" then
-    return
+  local root = vim.fs.root(ev.buf, self.opts.root_names)
+  if not root then
+    self:notify(("cannot find root for buffer:  %d"):format(ev.buf))
   end
-  local dir = vim.fs.dirname(file)
-  local root_file = vim.fs.find(self.opts.root_names, { path = dir, upward = true })[1]
-  if not root_file then
-    return
-  end
-  local result = vim.fs.dirname(root_file)
-  vim.cmd.lcd(result)
-  self:notify("Set CWD to " .. result)
+  vim.cmd.lcd(root)
+  self:notify("Set CWD to " .. root)
 end
 
 ---@param bufnr integer

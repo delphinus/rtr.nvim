@@ -15,7 +15,6 @@
 ---@field default_options rtr.Opts
 ---@field opts rtr.InstanceOpts
 ---@field augroup_name string
----@field cache table<string, string>
 local Rtr = {}
 
 ---@return rtr.Rtr
@@ -23,7 +22,6 @@ Rtr.new = function()
   return setmetatable({
     default_options = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } },
     augroup_name = "rtr",
-    cache = {},
   }, { __index = Rtr })
 end
 
@@ -55,45 +53,36 @@ function Rtr:setup(opts)
     disabled_filetypes = { self.opts.disabled_filetypes, orFalseOrNil "table" },
     enabled_buftypes = { self.opts.enabled_buftypes, orFalseOrNil "table" },
     buf_filter = { self.opts.buf_filter, orFalseOrNil "function" },
-    log_level = { self.opts.log_level, orFalseOrNil "integer" },
+    log_level = { self.opts.log_level, orFalseOrNil "number" },
   }
-  vim.api.nvim_create_autocmd("BufEnter", {
+  vim.api.nvim_create_autocmd("BufWinEnter", {
     group = vim.api.nvim_create_augroup(self.augroup_name, {}),
     ---@param ev rtr.EventInfo
     callback = function(ev)
-      self:on_buf_enter(ev)
+      self:on_buf_win_enter(ev)
     end,
   })
 end
 
 ---@param ev rtr.EventInfo
-function Rtr:on_buf_enter(ev)
+function Rtr:on_buf_win_enter(ev)
   if not self:is_file(ev.buf) then
     return
   end
   if self.opts.disabled_filetypes then
-    local ft = vim.api.nvim_buf_get_option(ev.buf, "filetype")
-    if vim.tbl_contains(self.opts.disabled_filetypes, ft) then
-      return true
+    if vim.tbl_contains(self.opts.disabled_filetypes, vim.bo[ev.buf].filetype) then
+      return
     end
   end
   if self.opts.buf_filter and not self.opts.buf_filter(ev.buf) then
     return
   end
-  local file = vim.api.nvim_buf_get_name(ev.buf)
-  if file == "" then
-    return
+  local root = vim.fs.root(ev.buf, self.opts.root_names)
+  if not root then
+    self:notify(("cannot find root for buffer:  %d"):format(ev.buf))
   end
-  local dir = vim.fs.dirname(file)
-  if not self.cache[dir] then
-    local root_file = vim.fs.find(self.opts.root_names, { path = dir, upward = true })[1]
-    if not root_file then
-      return
-    end
-    self.cache[dir] = vim.fs.dirname(root_file)
-  end
-  vim.api.nvim_set_current_dir(self.cache[dir])
-  self:notify("Set CWD to " .. self.cache[dir])
+  vim.cmd.lcd(root)
+  self:notify("Set CWD to " .. root)
 end
 
 ---@param bufnr integer
@@ -102,8 +91,7 @@ function Rtr:is_file(bufnr)
   if not self.opts.enabled_buftypes then
     return false
   end
-  local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-  return vim.tbl_contains(self.opts.enabled_buftypes, buftype)
+  return vim.tbl_contains(self.opts.enabled_buftypes, vim.bo[bufnr].buftype)
 end
 
 ---@param msg string

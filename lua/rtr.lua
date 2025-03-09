@@ -55,17 +55,17 @@ function Rtr:setup(opts)
     buf_filter = { self.opts.buf_filter, orFalseOrNil "function" },
     log_level = { self.opts.log_level, orFalseOrNil "number" },
   }
-  vim.api.nvim_create_autocmd("BufEnter", {
+  vim.api.nvim_create_autocmd("BufWinEnter", {
     group = vim.api.nvim_create_augroup(self.augroup_name, {}),
     ---@param ev rtr.EventInfo
     callback = function(ev)
-      self:on_buf_enter(ev)
+      self:on_buf_win_enter(ev)
     end,
   })
 end
 
 ---@param ev rtr.EventInfo
-function Rtr:on_buf_enter(ev)
+function Rtr:on_buf_win_enter(ev)
   if not self:is_file(ev.buf) then
     return
   end
@@ -88,7 +88,7 @@ function Rtr:on_buf_enter(ev)
     return
   end
   local result = vim.fs.dirname(root_file)
-  vim.api.nvim_set_current_dir(result)
+  vim.cmd.lcd(result)
   self:notify("Set CWD to " .. result)
 end
 

@@ -1,12 +1,12 @@
 ---@class rtr.Opts
----@field root_names string|string[]|(fun(name: string): boolean)|nil default: { ".git" }
+---@field root_names string|string[]|(fun(name: string, path: string): boolean)|nil default: { ".git" }
 ---@field disabled_filetypes string[]|false|nil default: nil
 ---@field enabled_buftypes string[]|false|nil default: { "", "acwrite" }
 ---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
 ---@field log_level integer|false|nil default: nil
 
 ---@class rtr.Default: rtr.Opts
----@field root_names string|string[]|fun(name: string): boolean default: { ".git" }
+---@field root_names string|string[]|fun(name: string, path: string): boolean default: { ".git" }
 ---@field enabled_buftypes string[]|false default: { "", "acwrite" }
 
 ---@class rtr.Config: rtr.Default

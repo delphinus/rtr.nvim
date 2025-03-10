@@ -43,17 +43,27 @@ local config = Config.new()
 ---@param opts? rtr.Opts
 Config.setup = function(opts)
   opts = vim.tbl_extend("force", Config.default, opts or {})
+  local function false_or_nil_or(typ)
+    return function(v)
+      return type(v) == typ or v == false or v == nil
+    end,
+      true,
+      ("%s or false or nil"):format(typ)
+  end
   if vim.fn.has "nvim-0.11" == 1 then
-    local function or_force_or_nil(typ)
-      return function(v)
-        return type(v) == typ or v == false or v == nil
-      end
-    end
     vim.validate("root_names", opts.root_names, { "string", "table", "function" }, true)
-    vim.validate("disabled_filetypes", opts.disabled_filetypes, or_force_or_nil "table", true)
-    vim.validate("enabled_buftypes", opts.enabled_buftypes, or_force_or_nil "table", true)
-    vim.validate("buf_filter", opts.buf_filter, or_force_or_nil "function", true)
-    vim.validate("log_level", opts.log_level, or_force_or_nil "number", true)
+    vim.validate("disabled_filetypes", opts.disabled_filetypes, false_or_nil_or "table")
+    vim.validate("enabled_buftypes", opts.enabled_buftypes, false_or_nil_or "table")
+    vim.validate("buf_filter", opts.buf_filter, false_or_nil_or "function")
+    vim.validate("log_level", opts.log_level, false_or_nil_or "number")
+  else
+    vim.validate {
+      root_names = { opts.root_names, { "string", "table", "function" }, true },
+      disabled_filetypes = { opts.disabled_filetypes, false_or_nil_or "table" },
+      enabled_buftypes = { opts.enabled_buftypes, false_or_nil_or "table" },
+      buf_filter = { opts.buf_filter, false_or_nil_or "function" },
+      log_level = { opts.log_level, false_or_nil_or "number" },
+    }
   end
   config.values = opts
 end

@@ -13,7 +13,7 @@ function M.setup()
   end
 
   if not can_work() then
-    M.notify("This plugin needs vim.fs.root", vim.log.levels.ERROR)
+    M.error "This plugin needs vim.fs.root"
     return
   end
 
@@ -38,11 +38,11 @@ function M.on_buf_win_enter(ev)
   end
   local root = vim.fs.root(ev.buf, config.root_names)
   if not root then
-    M.notify(("cannot find root for buffer:  %d"):format(ev.buf))
+    M.info("cannot find root for buffer:  %d", ev.buf)
     return
   end
   vim.cmd.lcd(root)
-  M.notify("Set CWD to " .. root)
+  M.info("Set CWD to %s", root)
 end
 
 ---@param bufnr integer
@@ -54,13 +54,34 @@ function M.is_file(bufnr)
   return vim.tbl_contains(config.enabled_buftypes, vim.bo[bufnr].buftype)
 end
 
----@param msg string
----@param level integer?
-function M.notify(msg, level)
-  local log_level = level or config.log_level
-  if log_level then
-    vim.notify("[rtr] " .. msg, log_level)
+---@param level integer
+---@param fmt string
+---@param ... any
+function M.notify(level, fmt, ...)
+  if config.log_level == false then
+    return
   end
+  local log_level = config.log_level or level
+  local msg = fmt:format(...)
+  vim.notify("[rtr] " .. msg, log_level)
+end
+
+---@param fmt string
+---@param ... any
+function M.info(fmt, ...)
+  M.notify(vim.log.levels.INFO, fmt, ...)
+end
+
+---@param fmt string
+---@param ... any
+function M.warn(fmt, ...)
+  M.notify(vim.log.levels.WARN, fmt, ...)
+end
+
+---@param fmt string
+---@param ... any
+function M.error(fmt, ...)
+  M.notify(vim.log.levels.ERROR, fmt, ...)
 end
 
 return {

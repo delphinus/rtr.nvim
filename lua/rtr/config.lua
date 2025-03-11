@@ -8,41 +8,32 @@
 ---@class rtr.Default: rtr.Opts
 ---@field root_names string|string[]|fun(name: string, path: string): boolean default: { ".git" }
 ---@field enabled_buftypes string[]|false default: { "", "acwrite" }
+local default = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } }
 
 ---@class rtr.Config: rtr.Default
 ---@field values rtr.Default
-local Config = {}
-
----@type rtr.Default
-Config.default = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } }
-
----@return rtr.Config
-Config.new = function()
-  return setmetatable({ values = Config.default }, {
-    __index = function(self, key)
-      local keys = {
-        root_names = true,
-        default = true,
-        disabled_filetypes = true,
-        enabled_buftypes = true,
-        buf_filter = true,
-        log_level = true,
-      }
-      if key == "values" then
-        return rawget(self, key)
-      elseif keys[key] then
-        return rawget(rawget(self, "values"), key)
-      end
-      return rawget(Config, key)
-    end,
-  })
-end
-
-local config = Config.new()
+local M = setmetatable({ values = default }, {
+  __index = function(self, key)
+    local keys = {
+      root_names = true,
+      default = true,
+      disabled_filetypes = true,
+      enabled_buftypes = true,
+      buf_filter = true,
+      log_level = true,
+    }
+    if key == "values" then
+      return rawget(self, key)
+    elseif keys[key] then
+      return rawget(rawget(self, "values"), key)
+    end
+    return rawget(self, key)
+  end,
+})
 
 ---@param opts? rtr.Opts
-Config.setup = function(opts)
-  opts = vim.tbl_extend("force", Config.default, opts or {})
+M.setup = function(opts)
+  opts = vim.tbl_extend("force", default, opts or {})
   local function false_or_nil_or(typ)
     return function(v)
       return type(v) == typ or v == false or v == nil
@@ -65,7 +56,7 @@ Config.setup = function(opts)
       log_level = { opts.log_level, false_or_nil_or "number" },
     }
   end
-  config.values = opts
+  M.values = opts
 end
 
-return config
+return M

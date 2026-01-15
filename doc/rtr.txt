@@ -80,6 +80,8 @@ setup(opts: rtr.Opts?)					       *rtr-usage-setup*
 		  end,
 		  -- Show log when changed current-directory.
 		  log_level = vim.log.levels.DEBUG,
+		  -- use :lcd intead of :cd to change directory.
+		  use_lcd = true
 		}
 
 
@@ -128,6 +130,11 @@ log_level	(integer|false|nil)			 *rtr-options-log_level*
 		should use |vim.log.levels| for the value.
 
 		Default: `nil`
+
+use_lcd		(boolean|nil)				   *rtr-options-use_lcd*
+		Use |:lcd| instead of |:cd|.
+
+		Default: `false`
 
 ==============================================================================
 CAVEATS								   *rtr-caveats*

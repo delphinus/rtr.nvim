@@ -41,7 +41,11 @@ function M.on_buf_win_enter(ev)
     M.info("cannot find root for buffer:  %d", ev.buf)
     return
   end
-  vim.cmd.lcd(root)
+  if config.use_lcd then
+    vim.cmd.lcd(root)
+  else
+    vim.cmd.cd(root)
+  end
   M.info("Set CWD to %s", root)
 end
 

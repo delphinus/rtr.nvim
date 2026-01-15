@@ -4,11 +4,12 @@
 ---@field enabled_buftypes string[]|false|nil default: { "", "acwrite" }
 ---@field buf_filter (fun(bufnr: integer): boolean)|false|nil default: nil
 ---@field log_level integer|false|nil default: nil
+---@field use_lcd boolean|nil default: false
 
 ---@class rtr.Default: rtr.Opts
 ---@field root_names string|string[]|fun(name: string, path: string): boolean default: { ".git" }
 ---@field enabled_buftypes string[]|false default: { "", "acwrite" }
-local default = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" } }
+local default = { root_names = { ".git" }, enabled_buftypes = { "", "acwrite" }, use_lcd = false }
 
 ---@class rtr.Config: rtr.Default
 ---@field values rtr.Default
@@ -21,6 +22,7 @@ local M = setmetatable({ values = default }, {
       enabled_buftypes = true,
       buf_filter = true,
       log_level = true,
+      use_lcd = true,
     }
     if key == "values" then
       return rawget(self, key)
@@ -47,6 +49,7 @@ M.setup = function(opts)
     vim.validate("enabled_buftypes", opts.enabled_buftypes, false_or_nil_or "table")
     vim.validate("buf_filter", opts.buf_filter, false_or_nil_or "function")
     vim.validate("log_level", opts.log_level, false_or_nil_or "number")
+    vim.validate("use_lcd", opts.log_level, false_or_nil_or "boolean")
   else
     vim.validate {
       root_names = { opts.root_names, { "string", "table", "function" }, true },
@@ -54,6 +57,7 @@ M.setup = function(opts)
       enabled_buftypes = { opts.enabled_buftypes, false_or_nil_or "table" },
       buf_filter = { opts.buf_filter, false_or_nil_or "function" },
       log_level = { opts.log_level, false_or_nil_or "number" },
+      use_lcd = { opts.use_lcd, false_or_nil_or "boolean" },
     }
   end
   M.values = opts
